@@ -6,6 +6,7 @@ tasks.xml
 
 *.pyc
 __pycache__/
+.ipynb_checkpoints/
 
 instance/
 
@@ -20,7 +21,6 @@ build/
 *.db
 *.secrets
 
+# Pycharm & Vscode
 *.idea
 .vscode/
-
-nn/coursera-deep-learning/*
