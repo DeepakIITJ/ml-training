@@ -1,9 +1,9 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-def load_planar_dataset():
-    np.random.seed(1)
-    m = 400 # number of examples
+def load_planar_dataset(seed=1, m=400):
+    np.random.seed(seed)
+    m = m # number of examples
     N = int(m/2) # number of points per class
     D = 2 # dimensionality
     X = np.zeros((m,D)) # data matrix where each row is a single example
@@ -35,23 +35,3 @@ def sigmoid(x):
     """
     s = 1/(1+np.exp(-x))
     return s
-
-
-def plot_decision_boundary(model, X, y):
-    # Set min and max values and give it some padding
-    x_min, x_max = X[0, :].min() - 1, X[0, :].max() + 1
-    y_min, y_max = X[1, :].min() - 1, X[1, :].max() + 1
-    h = 0.01
-    # Generate a grid of points with distance h between them
-    xx, yy = np.meshgrid(np.arange(x_min, x_max, h), np.arange(y_min, y_max, h))
-    # Predict the function value for the whole grid
-    Z = model(np.c_[xx.ravel(), yy.ravel()])
-    Z = Z.reshape(xx.shape)
-    # Plot the contour and training examples
-    plt.contourf(xx, yy, Z, cmap=plt.cm.Spectral)
-    plt.ylabel('x2')
-    plt.xlabel('x1')
-    plt.scatter(X[0, :], X[1, :], c=y, cmap=plt.cm.Spectral)
-
-    plt.savefig('fig.png')
-

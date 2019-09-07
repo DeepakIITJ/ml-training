@@ -3,20 +3,23 @@ print(os.getcwd())
 
 import numpy as np
 import matplotlib.pyplot as plt
-from nn.utils import sigmoid, load_planar_dataset, plot_decision_boundary
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import accuracy_score
+from nn.utils import sigmoid, load_planar_dataset
 
-# 1 hidden layer
-
+# 1 hidden layer network with cross-entropy cost
 class NeuralNet:
     def __init__(self, dimensions):
         """
-        :param dimensions: (tpl/ list) Dimensions of the neural net. (input, hidden layer, output)
-        :param activations: (tpl/ list) Activations functions, if not supplied all are sigmoid.
+        Arguments:
+        dimensions: (tpl/ list) Dimensions of the neural net. (input, hidden layer, output)
+        activations: (tpl/ list) Activations functions, if not supplied all are sigmoid.
         """
         np.random.seed(2)
 
         self.n_layers = len(dimensions)
         self.loss = None
+        self.loss_dict = {}
         self.learning_rate = None
 
         # initialize Weights & bias
@@ -71,14 +74,6 @@ class NeuralNet:
         return self.loss
 
     def update_parameters(self, update_params):
-        """
-        Update weights and biases.
-
-        :param index: (int) Number of the layer
-        :param dw: (array) Partial derivatives for W
-        :param db: (array) Partial derivatives for b
-        """
-
         for k, v in update_params.items():
             dw = v[0]
             db = v[1]
@@ -134,19 +129,25 @@ class NeuralNet:
 
             # Print the cost every 1000 iterations
             if print_cost and i % 1000 == 0:
+                self.loss_dict[i] = self.loss
                 print("Cost after iteration %i: %f" % (i, cost))
 
-        
-
-
 if __name__=='__main__':
-    X, y = load_planar_dataset()
-    n_x = X.shape[0]  # size of input layer
+    X_train, y_train = load_planar_dataset(m=1000)
+    X_test, y_test = load_planar_dataset(m=400)
+
+    n_x = X_train.shape[0]  # size of input layer
     n_h = 4
-    n_y = y.shape[0]  # size of output layer
+    n_y = y_train.shape[0]  # size of output layer
 
     nn = NeuralNet(dimensions=(n_x, n_h, n_y))
-    nn.fit(X, y)
+    nn.fit(X_train, y_train)
+    
+    preds = np.rint(nn.predict(X_train))
+    print("Accuracy Train: {}".format(accuracy_score(y_train[0], preds[0])))
+
+    preds = np.rint(nn.predict(X_test))
+    print("Accuracy Test: {}".format(accuracy_score(y_test[0], preds[0])))
 
 
 
